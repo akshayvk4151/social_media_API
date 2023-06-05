@@ -10,6 +10,7 @@ from django.db.models import Sum
 from .serializers import UserSerializer
 from rest_framework import status
 
+#Api for registering a user
 @api_view(['POST'])
 def register(request, format=None):
     serializer = UserRegister(data=request.data)
@@ -25,7 +26,7 @@ def register(request, format=None):
         data = serializer.errors
     return Response(data)
 
-
+#Api for creating a post.
 @api_view(['POST'])
 def create_post(request, format=None):
     serializer = PostCreateSerializer(data=request.data)
@@ -35,7 +36,7 @@ def create_post(request, format=None):
     return Response(serializer.errors, status=400)
 
 
-
+#Pagination
 class CustomPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
@@ -44,7 +45,7 @@ class CustomPagination(PageNumberPagination):
 
 
 
-# retrieving a list of posts for the authenticated user
+#Api for retrieving a list of posts for the authenticated user
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def post_list(request, format=None):
@@ -69,7 +70,7 @@ def post_list(request, format=None):
         post_data = {
             'id': post.id,
             'description': post.description,
-            'images': images_data,  # Use the serialized images data
+            'images': images_data, 
             'likes_count': post.likes.count(),
             'dislikes_count': post.dislikes.count(),
             'created_date': post.created_date,
@@ -79,25 +80,6 @@ def post_list(request, format=None):
         data.append(post_data)
 
     return paginator.get_paginated_response(data)
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def post_like(request, id, format=None):
-    post = Post.objects.get(id=id)
-    user = request.user
-    liked = user in post.likes.all()
-    disliked = user in post.dislikes.all()
-    if liked:
-        post.likes.remove(user)
-    elif disliked:
-        post.dislikes.remove(user)
-        post.likes.add(user)
-    else:
-        post.likes.add(user)
-    return Response({'message': 'Success'})
-
-
-
 
 
 
