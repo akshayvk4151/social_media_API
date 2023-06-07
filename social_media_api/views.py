@@ -8,7 +8,7 @@ from . import models
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Sum
 from .serializers import UserSerializer
-from rest_framework import status
+
 
 #Api for registering a user
 @api_view(['POST'])
@@ -90,7 +90,7 @@ def like_post(request, id, format=None):
     try:
         post = Post.objects.get(id=id)
     except Post.DoesNotExist:
-        return Response({'message': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': 'Post not found'})
 
     user = request.user
     post.likes.add(user)
@@ -105,7 +105,7 @@ def dislike_post(request, id, format=None):
     try:
         post = Post.objects.get(id=id)
     except Post.DoesNotExist:
-        return Response({'message': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': 'Post not found'})
 
     user = request.user
     post.likes.remove(user)
@@ -123,7 +123,7 @@ def post_liked_users(request, id, format=None):
     try:
         post = Post.objects.get(id=id)
     except Post.DoesNotExist:
-        return Response({'message': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': 'Post not found'})
     
     liked_users = post.likes.all()
     serializer = UserSerializer(liked_users, many=True)
