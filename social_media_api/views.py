@@ -116,7 +116,7 @@ def dislike_post(request, id, format=None):
 
 
 
-# API endpoint allows users to get a list of the users who have liked a post.
+# API allows users to get a list of the users who have liked a post.
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def post_liked_users(request, id, format=None):
